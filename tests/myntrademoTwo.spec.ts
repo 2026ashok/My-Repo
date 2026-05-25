@@ -4,7 +4,7 @@ import { Myntraallpage } from "../pages/myntraallpage"
 import { ProductDetailPage } from "../pages/productDetailPage"
 
 
-test('myntra login',async({page})=>{
+test('@dailymyntra login',async({page})=>{
 
     const utils=new Utils(page)
     

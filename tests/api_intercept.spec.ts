@@ -3,7 +3,7 @@ import test from "@playwright/test"
 
 //https://jsonplaceholder.typicode.com
 
-test('intercept networking', async({page})=>{
+test('@daily @smoke intercept networking', async({page})=>{
 
     page.on('console', msg => console.log(msg.text()));
 
