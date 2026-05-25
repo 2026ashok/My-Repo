@@ -23,7 +23,7 @@ pipeline{
         }
         stage('install browsers'){
             steps{
-                bat 'npx playwright install
+                bat 'npx playwright install'
             }
         }
         stage('run playwright tests'){
