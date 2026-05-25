@@ -11,7 +11,7 @@ import { FramePage } from "../pages/framePage"
 import { Webtable } from "../pages/webtable"
 import { alertPage } from "../pages/alertPage"
 
-test('login',async({page})=>{
+test('@daily login',async({page})=>{
 
     const utils=new Utils(page)
     const buttonpage =new Buttonpage(page)
@@ -116,7 +116,7 @@ test('Web table',async({page})=>{
 })
 
 
-test.only('alert',async({page})=>{
+test('alert',async({page})=>{
     
      const utils = new Utils(page)
      await utils.lunchsite("https://demoqa.com/alerts")
