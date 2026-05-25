@@ -1,22 +1,67 @@
 name: Playwright Tests
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs daily at midnight
+
+  workflow_dispatch:
+    inputs:
+      grepTag:
+        description: 'Run tests with tag'
+        required: false
+        default: ''
+
+      testFile:
+        description: 'Test file to run'
+        required: false
+        default: ''
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: |
+          TEST_FILE="${{ github.event.inputs.testFile }}"
+          GREP_TAG="${{ github.event.inputs.grepTag }}"
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+
+            if [ -n "$GREP_TAG" ]; then
+              echo "Running tests with tag: $GREP_TAG"
+              npx playwright test --grep "$GREP_TAG"
+
+            elif [ -n "$TEST_FILE" ]; then
+              echo "Running test file: $TEST_FILE"
+              npx playwright test "$TEST_FILE"
+
+            else
+              echo "Running all tests"
+              npx playwright test
+            fi
+
+          else
+            echo "Scheduled execution"
+            npx playwright test tests/login.spec.ts --grep "@smoke"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
